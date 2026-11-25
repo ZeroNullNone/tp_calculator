@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#171717">
+  <meta name="description" content="Compare a single take-profit target with a split exit.">
+  <title>TP Calculator</title>
+  <link rel="icon" type="image/svg+xml" href="tp-mark.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="calculator.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="intro">
+      <img src="tp-mark.svg" alt="" width="54" height="54">
+      <div><h1>TP Calculator</h1><p>Compare a single take-profit target with a split exit.</p></div>
+    </header>
+
+    <section class="panel" aria-labelledby="trade-title">
+      <div class="heading"><h2 id="trade-title">Trade setup</h2><span id="direction" hidden></span></div>
+      <div class="trade-inputs">
+        <label>Entry price<input id="entry" inputmode="decimal" autocomplete="off" placeholder="Enter price"><small class="error" id="entry-error"></small></label>
+        <label>Position size<input id="size" inputmode="decimal" autocomplete="off" placeholder="Enter quantity"><small class="error" id="size-error"></small></label>
+        <label>Single TP price<input id="single" inputmode="decimal" autocomplete="off" placeholder="Enter target"><small class="error" id="single-error"></small></label>
+      </div>
+      <div class="trade-foot"><span>Position value <b id="notional">—</b></span><span>Single TP profit <b id="single-profit">—</b></span></div>
+    </section>
+
+    <section class="panel" aria-labelledby="split-title">
+      <div class="heading"><h2 id="split-title">Split take profit</h2><button id="add" class="add"><span aria-hidden="true">+</span> Add level</button></div>
+      <div class="split-layout">
+        <div class="editor">
+          <div class="level-grid level-head" aria-hidden="true"><span>Level</span><span>Target price</span><span>Allocation</span><span>Close qty</span><span>Profit</span><span></span></div>
+          <div id="levels"></div>
+          <div class="allocation-foot"><span>Total allocated <b id="allocation">—</b></span><button id="normalize" class="link-btn">Normalize to 100%</button></div>
+          <div id="allocation-bar" class="allocation-bar" aria-hidden="true"></div>
+          <p id="allocation-note" class="error" role="status"></p>
+        </div>
+        <aside class="presets" aria-labelledby="presets-title">
+          <h3 id="presets-title">Allocation presets</h3>
+          <div class="tools" role="group" aria-labelledby="presets-title"></div>
+          <p>Weights run from the nearest target to the farthest.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel comparison" aria-labelledby="comparison-title">
+      <div class="heading"><h2 id="comparison-title">Profit comparison</h2></div>
+      <p id="compare-note" role="status">Enter your trade and allocate 100% to see the results.</p>
+      <div id="results" hidden>
+        <div class="summary">
+          <div><span>Split − single profit</span><strong id="difference"></strong></div>
+          <div><span>Profit improvement</span><strong id="improvement"></strong></div>
+          <div><span>Return difference (pp)</span><strong id="points"></strong></div>
+        </div>
+        <table class="comparison-table">
+          <thead><tr><th scope="col">Strategy</th><th scope="col">Avg. exit</th><th scope="col">Total profit</th><th scope="col">Return</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Single TP</th><td id="avg-a"></td><td><b id="profit-a"></b><span class="rail" aria-hidden="true"><i id="chart-a"></i></span></td><td id="rate-a"></td></tr>
+            <tr><th scope="row">Split TP</th><td id="avg-b"></td><td><b id="profit-b"></b><span class="rail" aria-hidden="true"><i id="chart-b"></i></span></td><td id="rate-b"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <section class="preset-comparison" aria-labelledby="preset-comparison-title">
+        <h3 id="preset-comparison-title">Compare allocation presets</h3>
+        <div class="table-wrap"><table class="preset-table"><thead><tr>
+          <th scope="col">Preset</th><th scope="col">Allocation (%)</th><th scope="col">Avg. exit</th><th scope="col">Profit</th><th scope="col">Difference</th><th scope="col">Improvement</th>
+        </tr></thead><tbody id="preset-rows"></tbody></table></div>
+      </section>
+    </section>
+    <p id="storage-error" class="error" hidden>Your browser could not save these inputs.</p>
+  </main>
+  <template id="level-template">
+    <div class="level level-grid">
+      <b class="tp-name"></b>
+      <label><span class="mobile-label">Target price</span><input data-key="price" inputmode="decimal" autocomplete="off" placeholder="Price"><small class="error price-error"></small></label>
+      <div class="weight"><label><span class="mobile-label">Allocation</span><span class="field"><input data-key="allocation" inputmode="decimal" autocomplete="off" placeholder="Share"><span>%</span></span></label><input type="range" min="0" max="100" step="0.01"><small class="error weight-error"></small></div>
+      <div class="row-output"><span class="mobile-label">Close qty</span><span class="qty"></span></div>
+      <div class="row-output"><span class="mobile-label">Profit</span><span class="profit"></span></div>
+      <button class="remove" type="button">×</button>
+    </div>
+  </template>
+</body>
+</html>
